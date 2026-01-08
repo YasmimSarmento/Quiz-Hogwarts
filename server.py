@@ -1,11 +1,11 @@
 # coding: utf-8
 import socket
 
-# CONFIGURAÇÕES DO SERVIDOR
-HOST = '127.0.0.1'   # localhost
-PORT = 5000          # porta do servidor
+# configuração do servidor
+HOST = '127.0.0.1'   # localhost / IP da maquina
+PORT = 5000          # porta escolhida para o servidor
 
-# PERGUNTAS DO QUIZ
+# as perguntas feitas no quiz
 perguntas = [
     {
         "texto": "Diante de um desafio, você costuma:",
@@ -63,7 +63,7 @@ perguntas = [
     }
 ]
 
-# MAPEAMENTO DAS RESPOSTAS
+# mapeamento das respostas, cada casa vinculada a uma alternativa
 mapa_casas = {
     "A": "Grifinória",
     "B": "Corvinal",
@@ -71,7 +71,7 @@ mapa_casas = {
     "D": "Sonserina"
 }
 
-# CRIAÇÃO DO SOCKET
+# criação do socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST, PORT))
 server_socket.listen(1)
@@ -81,7 +81,7 @@ print("Servidor aguardando conexão...")
 client_socket, client_address = server_socket.accept()
 print(f"Cliente conectado: {client_address}")
 
-# INÍCIO DA COMUNICAÇÃO CLIENTE/SERVIDOR
+# inicio da comunicação cliente/servidor
 client_socket.sendall("WELCOME\n".encode("utf-8"))
 
 pontuacao = {
@@ -94,18 +94,18 @@ pontuacao = {
 resposta_desempate = None
 
 for indice, pergunta in enumerate(perguntas):
-    # Envia pergunta
+    # envia as perguntas uma a uma
     mensagem = f"QUESTION|{indice + 1}|{pergunta['texto']}\n"
     client_socket.sendall(mensagem.encode("utf-8"))
 
-    # Envia opções
+    # envia as opções
     for letra, texto in pergunta["opcoes"].items():
         opcao = f"OPTION|{letra}|{texto}\n"
         client_socket.sendall(opcao.encode("utf-8"))
 
     client_socket.sendall("ENDQUESTION\n".encode("utf-8"))
 
-    # Recebe resposta
+    # recebe cada resposta uma a uma
     resposta = client_socket.recv(1024).decode("utf-8").strip()
     _, alternativa = resposta.split("|")
 
@@ -115,7 +115,7 @@ for indice, pergunta in enumerate(perguntas):
     if indice == len(perguntas) - 1:
         resposta_desempate = casa
 
-# CÁLCULO DO RESULTADO
+# calculo do resultado
 maior_pontuacao = max(pontuacao.values())
 casas_empate = [casa for casa, pontos in pontuacao.items() if pontos == maior_pontuacao]
 
@@ -124,7 +124,7 @@ if len(casas_empate) == 1:
 else:
     casa_final = resposta_desempate
 
-# ENVIA O RESULTADO
+# enviando o resultado
 resultado = f"RESULT|{casa_final}\n"
 client_socket.sendall(resultado.encode("utf-8"))
 

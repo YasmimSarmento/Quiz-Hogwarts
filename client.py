@@ -1,19 +1,19 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 import socket
 
-# CONFIGURAÇÕES DO CLIENTE
+# configuração do cliente
 HOST = '127.0.0.1'
 PORT = 5000
 
-# CRIA SOCKET DO CLIENTE
+# cria o socket do cliente
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((HOST, PORT))
 print("\nConectado ao servidor!\n")
 
-# TRANSFORMA SOCKET EM ARQUIVO
+# transforma o socket em arquivo
 arquivo = client_socket.makefile('r', encoding='utf-8')
 
-# LOOP DA COMUNICAÇÃO
+# todo o loop da comunicação
 while True:
     mensagem = arquivo.readline().strip()
 
@@ -51,6 +51,6 @@ while True:
         print("Conexão encerrada pelo servidor, até breve :)\n")
         break
 
-# FECHA A CONEXÃO
+# fecha e encerra a conexão
 arquivo.close()
 client_socket.close()
